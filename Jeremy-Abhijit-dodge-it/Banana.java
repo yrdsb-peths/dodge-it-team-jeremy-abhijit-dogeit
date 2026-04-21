@@ -12,7 +12,7 @@ public class Banana extends Actor
 
         if(isTouching(Hero.class))
         {
-            Gameover gameover = new Gameover();
+            gameOver gameover = new gameOver();
             getWorld().addObject(gameover, 300, 200);
             getWorld().removeObject(this);
         }
