@@ -2,20 +2,41 @@ import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
 
 public class Hero extends Actor
 {
-    boolean atTop = true;
+    private static final int HERO_X = 100;
+    private int laneIndex = 1;
+
+    public Hero()
+    {
+        GreenfootImage heroImage = new GreenfootImage("man01.png");
+        heroImage.scale(60, 60);
+        setImage(heroImage);
+    }
+
     public void act()
     {
-        if(Greenfoot.mouseClicked(null)){
-            atTop = !atTop;
+        if (!(getWorld() instanceof MyWorld)) {
+            return;
         }
 
-        if(atTop)
-        {
-            setLocation(100,100);
+        MyWorld world = (MyWorld) getWorld();
+        if (world.isGameRunning()) {
+            String key = Greenfoot.getKey();
+            if ("w".equals(key) || "up".equals(key)) {
+                laneIndex--;
+            } else if ("s".equals(key) || "down".equals(key)) {
+                laneIndex++;
+            }
+
+            if (laneIndex < 0) {
+                laneIndex = 0;
+            }
+
+            int lastLane = world.getLaneCount() - 1;
+            if (laneIndex > lastLane) {
+                laneIndex = lastLane;
+            }
         }
-        else
-        {
-            setLocation(100,300);
-        }
+
+        setLocation(HERO_X, world.getLaneY(laneIndex));
     }
 }
