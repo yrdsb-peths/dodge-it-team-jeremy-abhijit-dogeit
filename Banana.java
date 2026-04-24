@@ -28,7 +28,9 @@ public class Banana extends Actor
             return;
         }
 
-        if (isTouching(Hero.class)) {
+        java.util.List<Hero> heroes = getWorld().getObjects(Hero.class);
+        Hero hero = heroes.isEmpty() ? null : heroes.get(0);
+        if (hero != null && isRealCollision(hero)) {
             world.onHeroHit();
         }
     }
@@ -43,6 +45,15 @@ public class Banana extends Actor
         int spawnX = world.getWidth() + 120 + Greenfoot.getRandomNumber(120);
         setImage(createCarImage(randomColor()));
         setLocation(spawnX, world.getLaneY(laneIndex));
+    }
+
+    private boolean isRealCollision(Hero hero)
+    {
+        int dx = Math.abs(getX() - hero.getX());
+        int dy = Math.abs(getY() - hero.getY());
+
+        // Tight hitbox to avoid false collisions from transparent image padding.
+        return dx < 34 && dy < 16;
     }
 
 
