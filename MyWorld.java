@@ -35,24 +35,18 @@ public class MyWorld extends World
             // Progressive difficulty: spawn additional cars
             carSpawnCounter++;
             int difficulty = score / 1500; // Difficulty tier
-            int spawnInterval = Math.max(70 - (difficulty * 10), 30); // Cars spawn much faster
+            int spawnInterval = Math.max(90 - (difficulty * 8), 50); // More reasonable spawn rate
             
             if (carSpawnCounter >= spawnInterval) {
                 spawnRandomCar();
-                if (score > 1200 && Greenfoot.getRandomNumber(100) < 35) {
-                    spawnRandomCar();
-                }
                 carSpawnCounter = 0;
             }
             
             showHud();
             return;
         }
-
-        showText("Crash! Distance: " + score + " m", getWidth() / 2, getHeight() / 2 + 10);
-        showText("Best: " + bestScore + " m", getWidth() / 2, getHeight() / 2 + 40);
-        showText("Press ENTER / SPACE / R to restart", getWidth() / 2, getHeight() / 2 + 70);
         
+        // Game over - only show restart message (gameOver actor handles crash display)
         String key = Greenfoot.getKey();
         if (key != null && (key.equals("enter") || key.equals("return") || key.equals("space") || key.equals("r"))) {
             Greenfoot.setWorld(new MyWorld());
@@ -94,17 +88,9 @@ public class MyWorld extends World
 
     private void showHud()
     {
-        int difficulty = (score / 1500) + 1;
-        String difficultyText = "Lvl " + difficulty;
         
-        showText("Distance: " + score + " m", 70, 22);
-        showText("Best: " + bestScore + " m", 220, 22);
-        showText(difficultyText, 350, 22);
-        showText("W/S or Arrows to move", 470, 22);
-
-        if (gameRunning) {
-            showText("", getWidth() / 2, getHeight() / 2 + 70);
-        }
+        showText("Distance: " + score + " m", 120, 22);
+        showText("Use W & S to move", 460, 22);
     }
 
     private void drawBackdrop()
@@ -140,13 +126,13 @@ public class MyWorld extends World
         Hero hero = new Hero();
         addObject(hero, 100, getLaneY(1));
 
-        // Start fair: fewer cars and no immediate crowding.
+        // Start fair: fewer initial cars with good spacing to prevent early crowding
         int[] initialLanes = {0, 2};
         for (int i = 0; i < initialLanes.length; i++) {
             int lane = initialLanes[i];
             Banana car = new Banana();
             car.setLane(lane);
-            addObject(car, getWidth() + 160 + (i * 220), getLaneY(lane));
+            addObject(car, getWidth() + 200 + (i * 250), getLaneY(lane));
         }
 
         showHud();
@@ -157,7 +143,7 @@ public class MyWorld extends World
         Banana car = new Banana();
         int randomLane = Greenfoot.getRandomNumber(getLaneCount());
         car.setLane(randomLane);
-        // Spawn closer to the screen edge so new traffic appears sooner.
-        addObject(car, getWidth() + 40, getLaneY(randomLane));
+        // Spawn further off-screen to prevent clustering and collision at spawn point
+        addObject(car, getWidth() + 160 + Greenfoot.getRandomNumber(100), getLaneY(randomLane));
     }
 }
